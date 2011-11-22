@@ -124,7 +124,7 @@ int main(void) {
         fclose(Batt);
 
         dummy = ((float)nowcharge/fullcharge)*100;
-        if(dummy <= 37 || battdo >= 3) {
+        if(dummy <= 37 && battdo == 2 || battdo >= 3) {
             if(battdo == 1) text = "Power Supply Charging";
             if(battdo == 2) text = "Power Supply Discharging";
             if(battdo == 3) text = "Power Supply Charged";

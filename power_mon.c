@@ -6,7 +6,6 @@
 #include <string.h>
 
 #define SYS_FILE "/sys/class/power_supply/BAT0/uevent"
-// #define LOG_FILE "/home/pnewm/documents/power_mon.log"
 
 static char *text = "";
 static char text1[80] = "";
@@ -128,9 +127,6 @@ int main(void) {
         fclose(Batt);
 
         dummy = ((float)nowcharge/fullcharge)*100;
-        //Batt = fopen(LOG_FILE, "a");
-        //fprintf(Batt, "%d%%  ", dummy);
-        //fclose(Batt);
         if(dummy <= 37 || battdo >= 3) {
             if(battdo == 1) text = "Power Supply Charging";
             if(battdo == 2) text = "Power Supply Discharging";

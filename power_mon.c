@@ -68,12 +68,10 @@ int window_loop(){
    			XDrawString(dis, ev.xany.window, pen, (width-text_width1)/2, texty+font->ascent, text1, strlen(text1));
 			break;
 		case ConfigureNotify:
-			if (width != ev.xconfigure.width
-					|| height != ev.xconfigure.height) {
+			if (width != ev.xconfigure.width || height != ev.xconfigure.height) {
 				width = ev.xconfigure.width;
 				height = ev.xconfigure.height;
 				XClearWindow(dis, ev.xany.window);
-				//printf("Size changed to: %d by %d", width, height);
 			}
 			break;
         /* exit if a button is pressed inside the window */
@@ -86,7 +84,7 @@ int window_loop(){
 
 int main(void) { 
     FILE *Batt ; 
-    char  buffer[80]; /* Way bigger that neccessary */ 
+    char  buffer[80];
     char *battstatus, *chargenow, *lastfull;
     int battdo, dummy ;
     long nowcharge, fullcharge;
@@ -104,7 +102,6 @@ int main(void) {
                 if(strcmp(battstatus, "=Charging\n") == 0)
                     battdo = 1;
                 else if(strcmp(battstatus, "=Discharging\n") == 0)
-                    //printf("going down");
                     battdo = 2;
                 else if(strcmp(battstatus, "=Charged\n") == 0)
                     battdo = 3;

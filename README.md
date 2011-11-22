@@ -13,7 +13,7 @@
 ###Usage
 -----
 
-**power_mon** doesn't continually poll the baattery status. It runs once to check
+**power_mon** doesn't continually poll the battery status. It runs once to check
 	the status, if the battery is below 37% or charged it pops up a small window,
 	then exits.
 	I have cron run *power_mon* every five minutes which seems to work fine.

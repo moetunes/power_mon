@@ -1,3 +1,17 @@
+/* A light battery warning system
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xresource.h>
@@ -93,14 +107,15 @@ int main(void) {
         return(0) ;
     } else {
         while(fgets(buffer,sizeof buffer,Batt) != NULL) {
-            /* Now look for info */
+            /* Now look for info
+            * first search term to match */
             if(strstr(buffer,"POWER_SUPPLY_STATUS") != NULL) {
                 battstatus = strstr(buffer, "=");
                 //printf("%s\n", battstatus);
-                if(strcmp(battstatus, "=Charging\n") == 0)
-                    battdo = 1;
-                else if(strcmp(battstatus, "=Discharging\n") == 0)
+                if(strcmp(battstatus, "=Discharging\n") == 0)
                     battdo = 2;
+                else if(strcmp(battstatus, "=Charging\n") == 0)
+                    battdo = 1;
                 else if(strcmp(battstatus, "=Charged\n") == 0)
                     battdo = 3;
                 else if(strcmp(battstatus, "=Full\n") == 0)
@@ -108,11 +123,13 @@ int main(void) {
                 else
                     battdo = 5;
             }
+            /* Second search term */
             if(strstr(buffer,"POWER_SUPPLY_CHARGE_FULL=") != NULL) {
                 lastfull = strstr(buffer, "=");
                 fullcharge = atoi(lastfull+1);
                 //printf("\t%s", lastfull+=1);
             }
+            /* Third search term */s
             if(strstr(buffer,"POWER_SUPPLY_CHARGE_NOW=") != NULL) {
                 chargenow = strstr(buffer, "=");
                 nowcharge = atoi(chargenow+1);
@@ -123,8 +140,8 @@ int main(void) {
 
         dummy = ((float)nowcharge/fullcharge)*100;
         if((dummy <= 37 && battdo == 2) || battdo >= 3) {
-            if(battdo == 1) text = "Power Supply Charging";
             if(battdo == 2) text = "Power Supply Discharging";
+            if(battdo == 1) text = "Power Supply Charging";
             if(battdo == 3) text = "Power Supply Charged";
             if(battdo == 4) text = "Power Supply Full";
             if(battdo == 5) text = "Power Supply Unknown !!";

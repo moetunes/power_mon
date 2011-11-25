@@ -28,6 +28,7 @@ Need Xlib, then:
 
     Edit the power_mon.c file to point to the relevant file in
     /sys/class/power_supply.
+    Check the three searched terms are relevant or edit to suit.
 
     #define SYS_FILE "/sys/class/power_supply/BAT0/uevent"
 

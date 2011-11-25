@@ -3,7 +3,7 @@ LDADD+= -lX11
 LDFLAGS=
 EXEC=power_mon
 
-PREFIX?= /usr
+PREFIX?= /usr/local
 BINDIR?= $(PREFIX)/bin
 
 CC=gcc

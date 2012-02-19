@@ -21,6 +21,7 @@
 >	$ crontab -e 
 
 and add
+
 >	*/5 * * * * export DISPLAY=:0 /path/to/power_mon
 
 ###Installation

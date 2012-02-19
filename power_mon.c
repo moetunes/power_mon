@@ -20,12 +20,16 @@
 #include <string.h>
 
 #define SYS_FILE "/sys/class/power_supply/BAT0/uevent"
+#define MIN_PERCENT 34
+#define SEARCHTERM1 "POWER_SUPPLY_STATUS"
+#define SEARCHTERM2 "POWER_SUPPLY_CHARGE_FULL="
+#define SEARCHTERM3 "POWER_SUPPLY_CHARGE_NOW="
 
 static char *text = "";
 static char text1[30] = "";
 
 
-int window_loop(){
+void window_loop(){
 	int screen_num, width, height;
 	unsigned long background, border;
 	Window win;
@@ -37,7 +41,7 @@ int window_loop(){
 
 	/* First connect to the display server, as specified in the DISPLAY environment variable. */
 	dis = XOpenDisplay(NULL);
-	if (!dis) {fprintf(stderr, "\033[0;31mUnable to connect to display\033[0m");return 1;}
+	if (!dis) {fprintf(stderr, "\033[0;31mUnable to connect to display\033[0m");return;}
 
 	screen_num = DefaultScreen(dis);
 	background = BlackPixel(dis, screen_num);
@@ -88,8 +92,9 @@ int window_loop(){
 			break;
         /* exit if a button is pressed inside the window */
 		case ButtonPress:
+		    XFreeGC(dis, pen);
 			XCloseDisplay(dis);
-			return 0;
+			return;
 		}
 	}
 }
@@ -109,7 +114,7 @@ int main(void) {
         while(fgets(buffer,sizeof buffer,Batt) != NULL) {
             /* Now look for info
             * first search term to match */
-            if(strstr(buffer,"POWER_SUPPLY_STATUS") != NULL) {
+            if(strstr(buffer,SEARCHTERM1) != NULL) {
                 battstatus = strstr(buffer, "=");
                 //printf("%s\n", battstatus);
                 if(strcmp(battstatus, "=Discharging\n") == 0)
@@ -124,13 +129,13 @@ int main(void) {
                     battdo = 5;
             }
             /* Second search term */
-            if(strstr(buffer,"POWER_SUPPLY_CHARGE_FULL=") != NULL) {
+            if(strstr(buffer,SEARCHTERM2) != NULL) {
                 lastfull = strstr(buffer, "=");
                 fullcharge = atoi(lastfull+1);
                 //printf("\t%s", lastfull+=1);
             }
-            /* Third search term */s
-            if(strstr(buffer,"POWER_SUPPLY_CHARGE_NOW=") != NULL) {
+            /* Third search term */
+            if(strstr(buffer,SEARCHTERM3) != NULL) {
                 chargenow = strstr(buffer, "=");
                 nowcharge = atoi(chargenow+1);
                 //printf("\t%s ", chargenow+=1);
@@ -139,7 +144,7 @@ int main(void) {
         fclose(Batt);
 
         dummy = ((float)nowcharge/fullcharge)*100;
-        if((dummy <= 37 && battdo == 2) || battdo >= 3) {
+        if((dummy <= MIN_PERCENT && battdo == 2) || battdo >= 3) {
             if(battdo == 2) text = "Power Supply Discharging";
             if(battdo == 1) text = "Power Supply Charging";
             if(battdo == 3) text = "Power Supply Charged";

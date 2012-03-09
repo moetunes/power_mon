@@ -20,13 +20,13 @@
 #include <string.h>
 
 #define SYS_FILE "/sys/class/power_supply/BAT0/uevent"
-#define MIN_PERCENT 34
+#define MIN_PERCENT 25
 #define SEARCHTERM1 "POWER_SUPPLY_STATUS"
 #define SEARCHTERM2 "POWER_SUPPLY_CHARGE_FULL="
 #define SEARCHTERM3 "POWER_SUPPLY_CHARGE_NOW="
 
-static char *text = "";
-static char text1[30] = "";
+static char *text = "FILE";
+static char text1[30] = "ERROR";
 
 
 void window_loop(){
@@ -103,12 +103,13 @@ int main(void) {
     FILE *Batt;
     char  buffer[80];
     char *battstatus, *chargenow, *lastfull;
-    int battdo, dummy;
+    int battdo = 0, dummy;
     long nowcharge, fullcharge;
 
     Batt = fopen( SYS_FILE, "r" ) ;
     if ( Batt == NULL ) {
         fprintf(stderr, "\t\033[0;31mCouldn't find %s\033[0m \n", SYS_FILE);
+        window_loop();
         return(0) ;
     } else {
         while(fgets(buffer,sizeof buffer,Batt) != NULL) {
@@ -142,6 +143,8 @@ int main(void) {
             }
         }
         fclose(Batt);
+        if(battdo < 1)
+            window_loop();
 
         dummy = ((float)nowcharge/fullcharge)*100;
         if((dummy <= MIN_PERCENT && battdo == 2) || battdo >= 3) {

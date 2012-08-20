@@ -11,7 +11,7 @@ CC=gcc
 all: $(EXEC)
 
 power_mon: power_mon.o
-	$(CC) $(LDFLAGS) -Os -o $@ $+ $(LDADD)
+	$(CC) $(LDFLAGS) -O2 -ffast-math -fno-unit-at-a-time -o $@ $+ $(LDADD)
 
 install: all
 	install -Dm 755 power_mon $(DESTDIR)$(BINDIR)/power_mon

@@ -2,7 +2,7 @@
 *
 *  This program is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 3 of the License, or
+*  the Free Software Foundation, either version 2 of the License, or
 *  (at your option) any later version.
 *  This program is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,14 +30,14 @@ static char text1[30] = "ERROR";
 
 
 void window_loop(){
-	int screen_num, width, height;
+	unsigned int screen_num, width, height;
 	unsigned long background, border;
 	Window win;
 	XEvent ev;
 	Display *dis;
     char *fontname;
 	XFontStruct *font;
-	int text_width, text_width1, texty;
+	unsigned int text_width, text_width1, texty;
 
 	/* First connect to the display server, as specified in the DISPLAY environment variable. */
 	dis = XOpenDisplay(NULL);
@@ -103,10 +103,10 @@ int main(void) {
     FILE *Batt;
     char  buffer[80];
     char *battstatus, *chargenow, *lastfull;
-    int battdo = 0, dummy;
+    unsigned int battdo = 0, dummy;
     long nowcharge, fullcharge;
 
-    Batt = fopen( SYS_FILE, "r" ) ;
+    Batt = fopen( SYS_FILE, "rb" ) ;
     if ( Batt == NULL ) {
         fprintf(stderr, "\t\033[0;31mCouldn't find %s\033[0m \n", SYS_FILE);
         window_loop();
@@ -147,12 +147,11 @@ int main(void) {
             window_loop();
 
         dummy = ((float)nowcharge/fullcharge)*100;
-        if((dummy <= MIN_PERCENT && battdo == 2) || battdo >= 3) {
+        if((dummy <= MIN_PERCENT && battdo == 2) || battdo > 2) {
             if(battdo == 2) text = "Power Supply Discharging";
-            if(battdo == 1) text = "Power Supply Charging";
-            if(battdo == 3) text = "Power Supply Charged";
-            if(battdo == 4) text = "Power Supply Full";
-            if(battdo == 5) text = "Power Supply Unknown !!";
+            else if(battdo == 3) text = "Power Supply Charged";
+            else if(battdo == 4) text = "Power Supply Full";
+            else if(battdo == 5) text = "Power Supply Unknown !!";
             snprintf(text1, 29, "Remaining Charge %d %%", dummy);
             window_loop();
         }

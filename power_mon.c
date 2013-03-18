@@ -28,27 +28,27 @@
 static char *text = "FILE";
 static char text1[30] = "ERROR";
 
-
 void window_loop(){
 	unsigned int screen_num, width, height;
 	unsigned long background, border;
 	Window win;
 	XEvent ev;
 	Display *dis;
-    char *fontname;
+    char *fontname = "-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*";
 	XFontStruct *font;
 	unsigned int text_width, text_width1, texty;
 
-	/* First connect to the display server, as specified in the DISPLAY environment variable. */
 	dis = XOpenDisplay(NULL);
-	if (!dis) {fprintf(stderr, "\033[0;31mUnable to connect to display\033[0m");return;}
+	if (!dis) {
+	    fputs("\033[0;31mPOWERMON :: Unable to connect to display\033[0m", stderr);
+	    return;
+	}
 
 	screen_num = DefaultScreen(dis);
 	background = BlackPixel(dis, screen_num);
 	border = WhitePixel(dis, screen_num);
 	width = (XDisplayWidth(dis, screen_num)/5);
 	height = (XDisplayHeight(dis, screen_num)/6);
-	fontname = "-*-freesans-*-*-*";
 	font = XLoadQueryFont(dis, fontname);
 	if (!font) {
 		fprintf(stderr, "unable to load preferred font: %s using fixed", fontname);
@@ -147,6 +147,8 @@ int main(void) {
             window_loop();
 
         dummy = ((float)nowcharge/fullcharge)*100;
+        /* if the battery is above MIN_PERCENT don't show the window
+           unless it's charged */
         if((dummy <= MIN_PERCENT && battdo == 2) || battdo > 2) {
             if(battdo == 2) text = "Power Supply Discharging";
             else if(battdo == 3) text = "Power Supply Charged";

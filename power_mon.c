@@ -21,6 +21,8 @@
 
 #define SYS_FILE "/sys/class/power_supply/BAT0/uevent"
 #define MIN_PERCENT 25
+/* 0 or 100 for full charge */
+#define MAX_PERCENT 85
 #define SEARCHTERM1 "POWER_SUPPLY_STATUS"
 #define SEARCHTERM2 "POWER_SUPPLY_CHARGE_FULL="
 #define SEARCHTERM3 "POWER_SUPPLY_CHARGE_NOW="
@@ -147,8 +149,9 @@ int main(void) {
             window_loop();
 
         dummy = ((float)nowcharge/fullcharge)*100;
+        if(dummy >= MAX_PERCENT) battdo = 3;
         /* if the battery is above MIN_PERCENT don't show the window
-           unless it's charged */
+           unless it's above MAX_PERCENT or charged */
         if((dummy <= MIN_PERCENT && battdo == 2) || battdo > 2) {
             if(battdo == 2) text = "Power Supply Discharging";
             else if(battdo == 3) text = "Power Supply Charged";
